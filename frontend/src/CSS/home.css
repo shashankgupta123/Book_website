@@ -1,0 +1,52 @@
+.home-container {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .slider-section {
+    width: 70%;
+  }
+  
+  .store-info {
+    width: 25%;
+    padding: 20px;
+  }
+  
+  .store-info h3, .store-info h4 {
+    margin-top: 20px;
+  }
+  
+  .store-info p {
+    margin: 10px 0;
+  }
+  
+  .store-info ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .store-info ul li {
+    margin: 5px 0;
+  }
+  
+  .store-info h4 {
+    margin-top: 30px;
+  }
+  
+  img {
+    width: 100%;
+  }
+  
+  button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #45a049;
+  }
+  

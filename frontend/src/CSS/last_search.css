@@ -1,0 +1,70 @@
+.last-two-books-container {
+    width: 100%;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .last-two-books-grid {
+    display: flex;
+    flex-wrap: nowrap; /* Prevent wrapping */
+    justify-content: flex-start; /* Align items to the left */
+    gap: 20px; /* Add space between cards */
+    margin-top: 20px;
+    overflow-x: auto; /* Allow horizontal scroll if needed */
+  }
+  
+  .book-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 300px; /* Fixed width for each book card */
+    padding: 20px;
+    transition: transform 0.3s ease-in-out;
+    margin-bottom: 20px;
+  }
+  
+  .book-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .book-header h2 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+  
+  .book-price {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #444;
+  }
+  
+  .book-images img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  .book-details {
+    font-size: 0.9rem;
+    color: #555;
+    margin-top: 10px;
+  }
+  
+  .book-actions {
+    margin-top: 20px;
+  }
+  
+  .view-details-btn {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+  }
+  
+  .view-details-btn:hover {
+    background-color: #0056b3;
+  }
+  

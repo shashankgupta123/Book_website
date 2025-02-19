@@ -1,0 +1,156 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+  }
+  
+  h1 {
+    text-align: center;
+    color: #333;
+    margin: 20px 0;
+  }
+  
+  /* Book List Container */
+  .book-list-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  /* Background Image */
+  .background-image {
+    background-image: url('https://prh.imgix.net/collections/inmarket-edm-1600x800.jpg?w=1920');
+    background-size: cover;
+    background-position: center;
+    height: 300px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  
+  /* Top Images Row */
+  .book-images-top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .book-top-image {
+    width: 32%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  
+  /* Book Grid */
+  .book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  
+  /* Book Card */
+  .book-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .book-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Book Header */
+  .book-header {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .book-header h2 {
+    margin: 0;
+    font-size: 1.5em;
+  }
+  
+  .book-header p {
+    margin: 5px 0;
+    font-size: 0.9em;
+  }
+  
+  /* Book Images */
+  .book-images {
+    display: flex;
+    overflow-x: scroll;
+    padding: 10px;
+    gap: 10px;
+  }
+  
+  .book-image {
+    width: 100px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+  
+  /* Book Details */
+  .book-details {
+    padding: 15px;
+    color: #333;
+  }
+  
+  .book-details p {
+    margin: 8px 0;
+    font-size: 0.9em;
+  }
+  
+  .book-details strong {
+    color: #555;
+  }
+  
+  /* Actions (Edit/Delete) */
+  .book-actions {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    background-color: #f9f9f9;
+  }
+  
+  .edit-button,
+  .delete-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    text-decoration: none;
+  }
+  
+  .edit-button {
+    background-color: #28a745;
+    color: #fff;
+  }
+  
+  .delete-button {
+    background-color: #dc3545;
+    color: #fff;
+  }
+  
+  .edit-button:hover {
+    background-color: #218838;
+  }
+  
+  .delete-button:hover {
+    background-color: #c82333;
+  }
+  

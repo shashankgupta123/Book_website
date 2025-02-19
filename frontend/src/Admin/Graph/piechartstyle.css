@@ -1,0 +1,49 @@
+/* Container for the pie chart */
+.pie-chart-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 30px;
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Title for the chart */
+  .chart-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  /* Wrapper around the pie chart */
+  .chart-wrapper {
+    width: 80%;
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Styling for the total income section */
+  .total-income {
+    font-size: 18px;
+    font-weight: 600;
+    margin-top: 20px;
+  }
+  
+  /* Loading spinner or message */
+  .loading {
+    text-align: center;
+    font-size: 18px;
+    color: #007BFF;
+    font-weight: bold;
+  }
+  
+  /* Error message styling */
+  .error-message {
+    text-align: center;
+    font-size: 18px;
+    color: #FF0000;
+    font-weight: bold;
+  }
+  

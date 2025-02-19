@@ -1,0 +1,36 @@
+.chart-container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .chart-wrapper {
+    position: relative;
+    height: 400px; /* Adjust the height of the chart */
+    width: 100%;
+  }
+  
+  h2 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  /* Make the chart responsive */
+  @media (max-width: 768px) {
+    .chart-container {
+      width: 90%;
+    }
+  
+    .chart-wrapper {
+      height: 300px; /* Adjust the chart height for smaller screens */
+    }
+  
+    h2 {
+      font-size: 1.5rem; /* Adjust the heading size for smaller screens */
+    }
+  }
+  
+  /* You can add other custom styles here if needed */
+  
