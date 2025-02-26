@@ -60,3 +60,54 @@ export const getBookReviews = async (req, res) => {
       res.status(500).json({ message: "Internal server error" });
     }
 };
+
+export const getAllReviews = async (req, res) => {
+  try {
+    console.log("Fetching all reviews...");
+
+    // Populate only the `title` from `Book` and return other review details as they are
+    const reviews = await Review.find()
+      .populate({ path: "bookId", select: "title" }) // Fetch only `title` from Book
+      .select("-__v"); // Exclude __v field from review results
+
+    if (!reviews || reviews.length === 0) {
+      return res.status(404).json({ message: "No reviews found" });
+    }
+
+    // Debugging: Log fetched reviews
+    console.log("Fetched Reviews:", reviews);
+
+    const formattedReviews = reviews.map((review) => ({
+      _id: review._id,
+      bookTitle: review.bookId?.title || "Unknown Book",
+      username: review.username,
+      rating: review.rating,
+      reviewText: review.reviewText,
+      createdAt: review.createdAt,
+    }));
+
+    res.status(200).json(formattedReviews);
+  } catch (err) {
+    console.error("Error fetching reviews:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// Delete a review
+export const deleteReview = async (req, res) => {
+  try {
+    const { reviewId } = req.params;
+    console.log(`Deleting review with ID: ${reviewId}`);
+
+    const deletedReview = await Review.findByIdAndDelete(reviewId);
+
+    if (!deletedReview) {
+      return res.status(404).json({ message: "Review not found" });
+    }
+
+    res.status(200).json({ message: "Review deleted successfully!" });
+  } catch (err) {
+    console.error("Error deleting review:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};

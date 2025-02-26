@@ -42,13 +42,11 @@ const AdminPage = () => {
       <div className="sidebar">
         <h2>Admin Dashboard</h2>
         <ul>
-          <li><Link to="/admin/about">About</Link></li>
-          <li><Link to="/admin/contact">Contact</Link></li>
           <li><Link to="/admin/books">Books</Link></li>
           <li><Link to="/admin/users">Users</Link></li>
           <li><Link to="/admin/contact">Contact</Link></li>
           <li><Link to="/admin/purchase">Payment List</Link></li>
-          <li><Link to="/admin/location">Location</Link></li>
+          <li><Link to="/admin/reviews">Reviews</Link></li>
         </ul>
       </div>
 

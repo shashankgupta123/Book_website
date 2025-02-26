@@ -73,17 +73,19 @@ def get_new_trends():
 
         if not email:
             return jsonify({"message": "Email is required!"}), 400
+
         user = users_collection.find_one({"email": email.strip()})
         if not user:
             return jsonify({"message": "User not found!"}), 404
-        new_trends = recommend_new_trends(user)
+
+        new_trends = recommend_new_trends()  # ✅ Now, it returns a dictionary
+
         return jsonify({
             "message": "New trends in books generated successfully!",
-            "recommendations": new_trends
+            "recommendations": new_trends["new_trends"]  # ✅ Extract the list
         }), 200
 
     except Exception as e:
-        print("Error:", e)
         return jsonify({"message": f"An error occurred: {str(e)}"}), 500
 
 # Last two book searches

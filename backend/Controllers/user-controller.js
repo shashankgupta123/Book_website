@@ -70,6 +70,33 @@ const login = async (req, res, next) => {
     }
 };
 
+const resetPassword = async (req, res) => {
+    try {
+      const { email, newPassword } = req.body;
+  
+      // Check if the user exists
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      console.log("Old Password Hash:", user.password);
+  
+      // Use the same hashing method as during registration
+      user.password = newPassword; // Assuming pre-save middleware handles hashing
+  
+      // Save the updated user object
+      await user.save();
+  
+      console.log("Updated Password Hash in DB:", user.password);
+  
+      res.status(200).json({ message: "Password reset successful" });
+    } catch (error) {
+      console.error("Error resetting password:", error);
+      res.status(500).json({ message: "Server error" });
+    }
+  };
+
 const getAllUsers = async (req, res, next) => {
     try {
         const users = await User.find({});
@@ -243,4 +270,5 @@ export default {
     addFavouriteBook,
     logout,
     adminlogout,
+    resetPassword,
  };

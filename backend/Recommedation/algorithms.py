@@ -1,9 +1,12 @@
-from pymongo import MongoClient
+from flask import Flask, request, jsonify
+from pymongo import MongoClient, DESCENDING
 
 MONGO_URI = "mongodb+srv://shashank0078:shashank123@cluster0.3dowa.mongodb.net/SEM_6?retryWrites=true&w=majority&appName=Cluster0"
 client = MongoClient(MONGO_URI)
 db = client['SEM_6']
-books_collection = db['books']  
+books_collection = db['books'] 
+purchases_collection = db['purchases']
+users_collection = db['users']  
 
 def recommend_by_visit_count(user):
     book_visited_data = user.get("booksVisited", [])
@@ -69,24 +72,50 @@ def recommend_by_similarity(user):
     print("Similar books based on user data:", similar_book_list)  
     return similar_book_list
 
-def recommend_new_trends(user):
-    new_books = books_collection.find().sort("date", -1).limit(3)
-    print("New books sorted by date:", new_books)  
-    new_trend_list = []
-    for book in new_books:
-        new_trend = {
-            "title": book.get("title"),
-            "author": book.get("author"),
-            "genre": book.get("genre", []),
-            "price": book.get("price", "N/A"),
-            "image": book.get("imageUrl"),
-            "id": str(book.get("_id"))
-        }
-        new_trend_list.append(new_trend)
-    
-    print("New trends based on recent books:", new_trend_list)  
-    return new_trend_list
+def recommend_new_trends():
+    try:
+        # ✅ Read email from query parameters (optional)
+        email = request.args.get('email')
+        print(f"User email received: {email}")
 
+        # ✅ Get top 3 most purchased books
+        top_purchased_books = purchases_collection.aggregate([
+            {"$group": {"_id": "$bookTitle", "purchaseCount": {"$sum": 1}}},
+            {"$sort": {"purchaseCount": DESCENDING}},
+            {"$limit": 3}
+        ])
+        top_purchased_titles = [book["_id"] for book in top_purchased_books]
+
+        # ✅ Get top 3 most favorited books
+        top_favorited_books = users_collection.aggregate([
+            {"$unwind": "$favorites"},
+            {"$group": {"_id": "$favorites", "favoriteCount": {"$sum": 1}}},
+            {"$sort": {"favoriteCount": DESCENDING}},
+            {"$limit": 3}
+        ])
+        top_favorited_titles = [book["_id"] for book in top_favorited_books]
+
+        # ✅ Combine results (avoid duplicates)
+        combined_titles = list(set(top_purchased_titles + top_favorited_titles))[:3]
+
+        # ✅ Fetch book details
+        trending_books = books_collection.find({"title": {"$in": combined_titles}})
+        new_trend_list = []
+        for book in trending_books:
+            new_trend_list.append({
+                "title": book.get("title"),
+                "author": book.get("author"),
+                "genre": book.get("genre", []),
+                "price": book.get("price", "N/A"),
+                "image": book.get("imageUrl"),
+                "book_id": str(book.get("_id"))  # ✅ Convert ObjectId to string
+            })
+
+        return {"new_trends": new_trend_list}  # ✅ Return a dictionary, not a Response
+
+    except Exception as e:
+        return {"message": f"An error occurred: {str(e)}"}  # ✅ Return error as dict
+           
 def recommend_by_last_two_searches(user):
     search_history = user.get("searchhistory", [])
     print("Search history for last two searches:", search_history)  

@@ -114,6 +114,16 @@ const Login = () => {
                 </p>
               </div>
 
+              <div className="col-12 my-2">
+                <p className="text-center fw-bold" style={{ color: "black", fontSize: "1.10rem" }}>
+                  Forgot Password?{" "}
+                  <Link to="/forgot password" className="fw-bold text-primary">
+                    Click Here
+                  </Link>
+
+                </p>
+              </div>
+
               <div className="col-12 my-2 d-flex justify-content-center submit-btn">
                 <button type="submit">Login Now</button>
               </div>

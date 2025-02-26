@@ -28,6 +28,9 @@ import Contact from '../Pages/Contact';
 import Purchase from '../Admin/Purchase/Purchase';
 import PurchaseDetail from '../Admin/Purchase/PurchaseDetails';
 import Location from '../Admin/Location/Location';
+import ForgotPassword from '../component/ForgotPassword/ForgotPassword';
+import ResetPassword from '../component/ForgotPassword/ResetPassword' 
+import ReviewPage from '../Admin/Reviews/ReviewPage';
 
 function AppRouter() {
     const token = localStorage.getItem("token");
@@ -39,6 +42,8 @@ function AppRouter() {
                     {/* Common Routes */}
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
+                    <Route path="/forgot password" element={<ForgotPassword/> }/> 
+                    <Route path="/reset-password" element={<ResetPassword/> }/>
 
                     {/* User Routes */}
                     {!admin && (
@@ -70,8 +75,9 @@ function AppRouter() {
                             <Route path="/books/update/:title" element={<AdminLayout><UpdateBook /></AdminLayout>} />
                             <Route path="/admin/contact" element={<AdminLayout><Contact_Us/></AdminLayout>} />
                             <Route path="/admin/purchase" element={<AdminLayout><Purchase/></AdminLayout>}/>
-                            <Route path='/purchase-details/:id' element={<AdminLayout><PurchaseDetail/></AdminLayout>}/>
+                            <Route path="/purchase-details/:id" element={<AdminLayout><PurchaseDetail/></AdminLayout>}/>
                             <Route path="/admin/location" element={<AdminLayout><Location/></AdminLayout>}/>
+                            <Route path="/admin/reviews" element={<AdminLayout> <ReviewPage/> </AdminLayout>} />
                         </>
                     )}
                 </Routes>
