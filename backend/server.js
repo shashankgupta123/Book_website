@@ -11,6 +11,7 @@ import purchaseRouter from "./Router/purchaseRouter.js"
 import graphRouter from "./Router/graph-router.js"
 import reviewRouter from "./Router/review-router.js";
 import locationRouter from "./Router/location-router.js";
+import cartRoutes from './Router/cart-router.js'
 
 import bodyParser from "body-parser"; 
 
@@ -36,6 +37,7 @@ app.use('/api',purchaseRouter);
 app.use('/purchase', graphRouter);
 app.use('/api/reviews',reviewRouter);
 app.use('/api/locations',locationRouter);
+app.use('/api/cart',cartRoutes);
 
 const PORT = 5000;
 connectDb().then(()=> {

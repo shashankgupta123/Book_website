@@ -3,7 +3,7 @@ import Purchase from '../Models/purchase.js';
 import PDFDocument from 'pdfkit';
 import fs from 'fs';
 import Book from '../Models/Book.js';
-
+import mongoose from "mongoose";
 const stripe = stripeModule('sk_test_51PrMfS2MTbYGhQ4qhCdsIfs3Y0OsE50lQzu2plVcNf874DRZmzFKh8D8AuFxIvOVSM5twxfs2IsfqNc4W7dEbYLU00yk3NAIBS');
 
 export const createCheckoutSession = async (req, res) => {
@@ -95,6 +95,111 @@ export const createCheckoutSession = async (req, res) => {
     }
 };
 
+export const createCheckoutSessionCart = async (req, res) => {
+    try {
+        console.log("📩 Received checkout request:", JSON.stringify(req.body, null, 2));
+
+        if (req.method !== 'POST') {
+            return res.status(405).json({ message: 'Method Not Allowed' });
+        }
+
+        const { userDetails, locationId, bookId } = req.body;
+
+        if (!userDetails?.username || !userDetails?.email || !userDetails?.phone) {
+            return res.status(400).json({ message: 'Missing required user details' });
+        }
+
+        if (!Array.isArray(bookId) || bookId.length === 0) {
+            return res.status(400).json({ message: "No books selected for purchase" });
+        }
+
+        if (!locationId || (!mongoose.Types.ObjectId.isValid(locationId) && typeof locationId !== 'string')) {
+            return res.status(400).json({ message: "Invalid location ID format" });
+        }
+
+        let totalAmount = 0;
+        let lineItems = [];
+        let purchasedBooks = [];
+        let errors = [];
+
+        for (const id of bookId) {
+            console.log(`🔎 Searching for book in Books collection, ID: ${id}`);
+
+            if (!mongoose.Types.ObjectId.isValid(id)) {
+                console.error(`❌ Invalid book ID format: ${id}`);
+                errors.push(`Invalid book ID format: ${id}`);
+                continue; // Skip invalid ID
+            }
+
+            const book = await Book.findOne({ book: id });
+            if (!book) {
+                console.error(`❌ Book not found: ${id}`);
+                errors.push(`Book with ID ${id} not found`);
+                continue; // Skip missing book
+            }
+
+            const locationIndex = book.locations.findIndex(loc =>
+                loc._id.toString() === locationId || loc.placeName === locationId
+            );
+
+            if (locationIndex === -1) {
+                console.error(`❌ Location not found for book: ${book.title}`);
+                errors.push(`Invalid location for ${book.title}`);
+                continue; // Skip books with invalid locations
+            }
+
+            if (book.locations[locationIndex].quantity <= 0) {
+                console.error(`❌ No stock available for ${book.title} at selected location`);
+                errors.push(`No stock available for ${book.title} at selected location`);
+                continue; // Skip out-of-stock books
+            }
+
+            // Reduce stock
+            book.locations[locationIndex].quantity -= 1;
+            book.markModified("locations");
+            await book.save();
+
+            totalAmount += book.price;
+            console.log(`✅ Updated stock for ${book.title}, New Quantity: ${book.locations[locationIndex].quantity}`);
+
+            lineItems.push({
+                price_data: {
+                    currency: 'inr',
+                    product_data: { name: book.title, description: book.description },
+                    unit_amount: Math.round(book.price * 100),
+                },
+                quantity: 1,
+            });
+
+            purchasedBooks.push({
+                userId: userDetails.userId,
+                bookTitle: book.title,
+                location: book.locations[locationIndex].placeName,
+            });
+        }
+
+        if (lineItems.length === 0) {
+            return res.status(400).json({ message: "No valid books available for purchase", errors });
+        }
+
+        console.log("🛠️ Creating Stripe checkout session...");
+        const session = await stripeInstance.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: lineItems,
+            mode: 'payment',
+            success_url: `http://localhost:5173/success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: 'http://localhost:5173/cancel',
+            customer_email: userDetails.email,
+        });
+
+        console.log("✅ Checkout session created successfully:", session.id);
+        return res.status(201).json({ url: session.url, errors });
+
+    } catch (err) {
+        console.error('❌ Error during checkout:', err);
+        return res.status(500).json({ message: 'Checkout process failed', error: err.message });
+    }
+};
 
 export const generateReceipt = async (req, res) => {
     const { sessionId } = req.params;
