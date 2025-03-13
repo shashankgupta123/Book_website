@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import "../../CSS/purchaseBook.css"; // Make sure the path to the CSS is correct
+// import "../../CSS/purchaseBook.css"; // Make sure the path to the CSS is correct
 
 const Books = () => {
     const [books, setBooks] = useState([]);

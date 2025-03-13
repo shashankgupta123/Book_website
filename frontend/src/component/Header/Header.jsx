@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, forwardRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Container, Row, Col } from "reactstrap";
@@ -28,7 +28,7 @@ const navLinks = [
   },
 ];
 
-const Header = () => {
+const Header = forwardRef((prop, ref) => {
   const navigate = useNavigate();
   const menuRef = useRef(null);
   const [searchTerm, setSearchTerm] =useState('');
@@ -42,32 +42,63 @@ const Header = () => {
 
   const toggleMenu = () => menuRef.current.classList.toggle("menu__active");
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
+  const handleSearch = async (e, term = searchTerm) => {
+    if (e) e.preventDefault();
 
-    if (!userEmail) {
-      alert("You must be logged in to submit a search term.");
-      return;
+    const query = decodeURIComponent(term.trim()); // Decode before sending
+    if (!query) {
+        alert("Search query cannot be empty.");
+        return;
     }
 
-    console.log("Search Term:", searchTerm);
+    if (!userEmail) {
+        alert("You must be logged in to submit a search term.");
+        return;
+    }
+
+    console.log("Search Term:", query);
     console.log("User Email:", userEmail);
 
     try {
-      const response = await fetch('http://localhost:5000/api/users/store-search', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: searchTerm, email: userEmail }),
-      });
+        const response = await fetch(`http://localhost:5000/api/users/store-search`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query, email: userEmail }),
+        });
 
-      const data = await response.json();
-      console.log("Response from Flask:", data);
-      navigate('/search-results', { state: { response: data } });
+        const data = await response.json();
+        console.log("Response from Flask:", data);
+
+        if (response.ok) {
+            navigate("/search-results", { state: { response: data } });
+        } else {
+            alert(data.message || "Search failed.");
+        }
     } catch (error) {
-      console.error("Error:", error);
-      alert("Error sending search term to the server.");
+        console.error("Error:", error);
+        alert("Error sending search term to the server.");
     }
-  };
+};
+
+  
+
+  useEffect(() => {
+    const handleVoiceSearch = (event) => {
+      const carQuery = event.detail.trim();
+      console.log("Voice Triggered Search for:", carQuery);
+    
+      if (carQuery) {
+        setSearchTerm(carQuery);
+        setTimeout(() => handleSearch(null, carQuery), 500);
+      } else {
+        console.warn("Voice search result is empty.");
+      }
+    };
+    
+
+    window.addEventListener("searchBookEvent", handleVoiceSearch);
+    return () => window.removeEventListener("searchBookEvent", handleVoiceSearch);
+  }, [userEmail]);
 
   return (
     <header className="header">
@@ -199,6 +230,6 @@ const Header = () => {
       </div>
     </header>
   );
-};
+});
 
 export default Header;
