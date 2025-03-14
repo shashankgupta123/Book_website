@@ -33,26 +33,21 @@ const BookDetails = () => {
         return <div>{error}</div>;
     }
 
-    const handleBack = () => {
-        navigate(-1); 
-    };
-
     return (
-        <div>
-            <h1>Book Details</h1>
-            <button onClick={handleBack} className="back-button">Back</button> {/* Back button */}
+        <div className="book-details-container">
             {book && (
-                <div>
-                    <p><strong>Username:</strong> {book.user.username}</p>
-                    <p><strong>Email:</strong> {book.user.email}</p>
-                    <p><strong>Phone:</strong> {book.user.phone}</p>
-                    <p><strong>Book Title:</strong> {book.bookTitle}</p>
-                    <p><strong>Author:</strong> {book.author}</p>
-                    <p><strong>Publisher:</strong> {book.publisher}</p>
-                    <p><strong>Genre:</strong> {book.genre}</p>
-                    <p><strong>Publication Date:</strong> {new Date(book.publicationDate).toLocaleDateString()}</p>
-                    <p><strong>Selected Format:</strong> {book.selectedFormat}</p>
-                    <p><strong>Price:</strong> {book.price}</p>
+                <div className="book-details-info">
+                    <h1>Books Details</h1>
+                    <p><span className="book-details-label">Username:</span> {book.user.username}</p>
+                    <p><span className="book-details-label">Email:</span> {book.user.email}</p>
+                    <p><span className="book-details-label">Phone:</span> {book.user.phone}</p>
+                    <p><span className="book-details-label">Book Title:</span> {book.bookTitle}</p>
+                    <p><span className="book-details-label">Author:</span> {book.author}</p>
+                    <p><span className="book-details-label">Publisher:</span> {book.publisher}</p>
+                    <p><span className="book-details-label">Genre:</span> {book.genre}</p>
+                    <p><span className="book-details-label">Publication Date:</span> {new Date(book.publicationDate).toLocaleDateString()}</p>
+                    <p><span className="book-details-label">Selected Format:</span> {book.selectedFormat}</p>
+                    <p><span className="book-details-label">Price:</span> {book.price}</p>
                 </div>
             )}
         </div>

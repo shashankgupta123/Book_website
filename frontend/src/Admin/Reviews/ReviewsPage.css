@@ -1,0 +1,100 @@
+.reviews-page-container {
+    max-width: 1000px;
+    margin: auto;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: 20px;
+    padding: 20px;
+}
+
+.reviews-page-title {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* Review List Grid: 3 reviews per row */
+.reviews-page-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 0;
+    margin: 0;
+}
+
+/* Individual Review Card */
+.reviews-page-item {
+    border: 1px solid #e0e0e0;
+    padding: 15px;
+    background: #ffffff;
+    display: grid;
+    grid-template-rows: auto auto auto auto auto;
+    gap: 5px;
+    text-align: left;
+    align-items: center;
+    border-radius: 10px;
+    
+    /* Light and Soft Shadow */
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.08), 
+                -2px -2px 8px rgba(0, 0, 0, 0.03);
+    
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+/* Hover Effect with Light Glow */
+.reviews-page-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 3px 3px 12px rgba(0, 0, 0, 0.1), 
+                -3px -3px 12px rgba(0, 0, 0, 0.05);
+}
+
+
+/* Hover Effect */
+.reviews-page-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.2), 
+                -6px -6px 15px rgba(0, 0, 0, 0.08);
+}
+
+
+.reviews-page-book-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #222;
+}
+
+.reviews-page-author,
+.reviews-page-rating,
+.reviews-page-text,
+.reviews-page-date {
+    font-size: 14px;
+    color: #444;
+}
+
+.reviews-page-delete-btn {
+    background-color: transparent;
+    border: none;
+    color: red;
+    font-size: 14px;
+    cursor: pointer;
+    justify-self: end;
+}
+
+.reviews-page-delete-btn:hover {
+    text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+    .reviews-page-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .reviews-page-list {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-// import "../../CSS/purchaseBook.css"; // Make sure the path to the CSS is correct
+import "../../CSS/purchaseBook.css"; // Updated CSS file name
 
 const Books = () => {
     const [books, setBooks] = useState([]);
@@ -29,40 +29,40 @@ const Books = () => {
     };
 
     if (loading) {
-        return <div className="container">Loading...</div>;
+        return <div className="book-list-container">Loading...</div>;
     }
 
     if (error) {
-        return <div className="container">{error}</div>;
+        return <div className="book-list-container">{error}</div>;
     }
 
     return (
-        <div className="container">
-            <h1>Books List</h1>
+        <div className="book-list-container">
+            <h1 className="book-list-title">Books List</h1>
             {books.length > 0 ? (
-                <table>
+                <table className="book-list-table">
                     <thead>
                         <tr>
-                            <th>Title</th>
-                            <th>Author</th>
-                            <th>Publisher</th>
-                            <th>Genre</th>
-                            <th>Purchase Date</th>
-                            <th>Price (₹)</th>
-                            <th>Actions</th>
+                            <th className="book-list-header">Title</th>
+                            <th className="book-list-header">Author</th>
+                            <th className="book-list-header">Publisher</th>
+                            <th className="book-list-header">Genre</th>
+                            <th className="book-list-header">Purchase Date</th>
+                            <th className="book-list-header">Price (₹)</th>
+                            <th className="book-list-header">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {books.map((book) => (
-                            <tr key={book._id}>
-                                <td>{book.bookTitle}</td>
-                                <td>{book.author}</td>
-                                <td>{book.publisher}</td>
-                                <td>{book.genre}</td>
-                                <td>{new Date(book.purchaseDate).toLocaleDateString()}</td>
-                                <td>{book.price}</td>
-                                <td>
-                                    <button onClick={() => handleFetchBook(book._id)}>
+                            <tr key={book._id} className="book-list-row">
+                                <td className="book-list-cell">{book.bookTitle}</td>
+                                <td className="book-list-cell">{book.author}</td>
+                                <td className="book-list-cell">{book.publisher}</td>
+                                <td className="book-list-cell">{book.genre}</td>
+                                <td className="book-list-cell">{new Date(book.purchaseDate).toLocaleDateString()}</td>
+                                <td className="book-list-cell">{book.price}</td>
+                                <td className="book-list-cell">
+                                    <button className="book-list-button" onClick={() => handleFetchBook(book._id)}>
                                         Fetch Details
                                     </button>
                                 </td>
@@ -71,7 +71,7 @@ const Books = () => {
                     </tbody>
                 </table>
             ) : (
-                <p>No books found</p>
+                <p className="book-list-empty">No books found</p>
             )}
         </div>
     );
