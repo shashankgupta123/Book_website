@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getBookByTitle } from '../service/bookService'; 
 import '../CSS/BookDetails.css';
 import axios from 'axios';
@@ -18,6 +18,8 @@ const BookDetails = () => {
     const [reviewText, setReviewText] = useState('');
     const bookTitleRef = useRef(null);  
     const [selectedLocation, setSelectedLocation] = useState('');
+    const navigate = useNavigate();
+
 
     useEffect(() => {
         const storedUserId = localStorage.getItem('userId');
@@ -204,13 +206,37 @@ const BookDetails = () => {
         }
     };
 
+    const addToCart = async () =>{
+        try{
+            const cartItem = {
+                bookId: book._id,
+                title: book.title,
+                author: book.author,
+                imageUrl: book.imageUrl,
+                price: book.price,
+                quantity: 1,
+            };
+
+            const response = await axios.post('http://localhost:5000/api/cart/', cartItem);
+            if (response.status === 201) {
+                alert("Book added to cart!");
+                navigate('/cart'); // Redirect to cart page
+            } else {
+                alert("Failed to add book to cart.");
+            }
+        }catch (err) {
+            console.error("Error:", err);
+            alert("Error adding to cart.");
+        }
+    };
+
     if (error) {
         return <p className="error-message">{error}</p>;
     }
 
     if (!book) {
         return <p>Loading book details...</p>;
-    }
+    }  
 
     return (
         <div className="book-details-container">
@@ -238,7 +264,7 @@ const BookDetails = () => {
                     <option value="">Select a Location</option>
                     {book.locations.map((location, index) => (
                         <option key={index} value={location._id}>
-                            {location.name} (Stock: {location.quantity})
+                            {location.name} {location.placeName}
                         </option>
                     ))}
                 </select>
@@ -257,51 +283,71 @@ const BookDetails = () => {
                         </button>
                     ))}
                 </div>
+                <div className="button-container">
+                <button onClick={addToCart} className="add-to-cart-button">
+                    Add to Cart
+                </button>
+
                 <button onClick={addToFavorites} className="add-favorite-button">
                     Add to Favorites
                 </button>
                 <button onClick={buyNow} className="buy-now-button">
                     Buy Now
                 </button>
-            </div>
-            <div className="reviews-section">
-                <h3>Reviews</h3>
-                {reviews.length === 0 ? (
-                    <p>No reviews yet. Be the first to review this book!</p>
-                ) : (
-                    reviews.map((review, index) => (
-                        <div key={index} className="review-item">
-                            <p><strong>{review.username}</strong> - {review.rating} stars</p>
-                            <p>{review.reviewText}</p>
-                        </div>
-                    ))
-                )}
-
-                {/* Add Review Form */}
-                <div className="add-review-container">
-                    <h4>Write a Review</h4>
-                    <div className="rating-container">
-                        <label>Rating: </label>
-                        <select
-                            value={rating}
-                            onChange={(e) => setRating(Number(e.target.value))}
-                        >
-                            <option value={0}>Select Rating</option>
-                            {[1, 2, 3, 4, 5].map((star) => (
-                                <option key={star} value={star}>{star} Star</option>
-                            ))}
-                        </select>
-                    </div>
-                    <textarea
-                        value={reviewText}
-                        onChange={(e) => setReviewText(e.target.value)}
-                        placeholder="Write your review here..."
-                    ></textarea>
-                    <button onClick={handleAddReview} className="submit-review-button">
-                        Submit Review
-                    </button>
                 </div>
             </div>
+            
+        <div className="book-reviews-section">
+            <h3>Reviews</h3>
+            {reviews.length === 0 ? (
+                <p className="no-reviews">No reviews yet. Be the first to review this book!</p>
+            ) : (
+                <div className="book-reviews-list">
+                    {reviews.map((review, index) => (
+                        <div key={index} className="book-review-item">
+                            <p>
+                                <strong>{review.username}</strong> - 
+                                <span className="book-review-rating"> {"⭐".repeat(review.rating)}</span>
+                            </p>
+                            <p className="book-review-text">{review.reviewText}</p>
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {/* Add Review Form */}
+            <div className="book-add-review-container">
+                <h4>Write a Review</h4>
+                <div className="book-rating-container">
+                    <label>Rating: </label>
+                    <select
+                        id="rating-select"
+                        value={rating}
+                        onChange={(e) => setRating(Number(e.target.value))}
+                    >
+                        <option value={0}>Select Rating</option>
+                        {[1, 2, 3, 4, 5].map((star) => (
+                            <option key={star} value={star}>
+                            {"⭐".repeat(star)}
+                        </option>
+                        ))}
+                    </select>
+                </div>
+                <textarea
+                    className="book-review-textarea"
+                    value={reviewText}
+                    onChange={(e) => setReviewText(e.target.value)}
+                    placeholder="Write your review here..."
+                ></textarea>
+                <button
+                    onClick={handleAddReview}
+                    className="book-submit-review-button"
+                    disabled={rating === 0 || reviewText.trim() === ""}
+                >
+                    Submit Review
+                </button>
+            </div>
+        </div>
         </div>
     );
 };

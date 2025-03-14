@@ -5,7 +5,7 @@ import { FaBook, FaEdit, FaTrashAlt, FaCalendarAlt, FaUser } from 'react-icons/f
 import { useNavigate } from 'react-router-dom';
 import TrendingBooks from '../component/Recommendation/TrendingBook';
 import SimilarBooks from '../component/Recommendation/SimilarBook';
-import MostVisitedBooks from '../component/Recommendation/MostVisted';
+// import MostVisitedBooks from '../component/Recommendation/MostVisted';
 import LastSearches from '../component/Recommendation/LastSearch';
 import FavouriteBooks from '../component/Recommendation/Favourite';
 
@@ -25,22 +25,6 @@ const BookList = () => {
         };
         fetchBooks();
     }, []);
-
-    // const handleDelete = async (id) => {
-    //     try {
-    //         const result = await deleteBook(id); // Delete book by ID
-    //         if (result.success) {
-    //             // Filter out the deleted book from the state
-    //             setBooks(books.filter((book) => book._id !== id)); // Use `_id` for filtering
-    //             alert("Book deleted successfully");
-    //         } else {
-    //             alert("Failed to delete the book");
-    //         }
-    //     } catch (error) {
-    //         console.error("Error deleting book:", error);
-    //         alert("Error deleting the book");
-    //     }
-    // };
 
     const handleCardClick = async (bookId, title, author, genre, description, imageUrl, price, publisher) => {
         try {

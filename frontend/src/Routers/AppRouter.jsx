@@ -31,6 +31,7 @@ import Location from '../Admin/Location/Location';
 import ForgotPassword from '../component/ForgotPassword/ForgotPassword';
 import ResetPassword from '../component/ForgotPassword/ResetPassword' 
 import ReviewPage from '../Admin/Reviews/ReviewPage';
+import Cart from '../Pages/Cart'
 
 function AppRouter() {
     const token = localStorage.getItem("token");
@@ -62,6 +63,7 @@ function AppRouter() {
                             <Route path="/cancel" element={<UserLayout><Cancel/></UserLayout>}/>
                             <Route path="/about" element={<UserLayout><About/></UserLayout>}/>
                             <Route path="/contact" element={<UserLayout><Contact/></UserLayout>}/>
+                            <Route path="/cart" element={<UserLayout><Cart/></UserLayout>} />
                         </>
                     )}
 

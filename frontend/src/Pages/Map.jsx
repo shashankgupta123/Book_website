@@ -4,6 +4,7 @@ import axios from "axios";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "../CSS/Map.css";
+import emailjs from "emailjs-com"
 
 // Fix marker icon issue in Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -107,6 +108,7 @@ const MergedMap = () => {
         alert("Form submitted successfully!");
         setShowForm(false);
         setSubmitError("");
+        console.log("Calling sendEmail...");
 
         const emailResponse = await sendEmail(formData);
         if (emailResponse) {
@@ -205,9 +207,9 @@ const MergedMap = () => {
       )}
     </div>
      {/* Button to toggle form visibility */}
-     <button onClick={() => setShowForm(true)} style={{ marginTop: "10px" }}>
+     {/* <button onClick={() => setShowForm(true)} style={{ marginTop: "10px" }}>
       Contact Us
-    </button>
+    </button> */}
 
     {/* Contact Form */}
     {showForm && (

@@ -71,7 +71,7 @@ const BookForm = () => {
                     latitude: parseFloat(loc.latitude),
                     longitude: parseFloat(loc.longitude),
                     quantity: loc.quantity ? parseInt(loc.quantity, 10) : 0,
-                    placeName: loc.placeName.trim() || "Unknown",
+                    placeName: loc.placeName.trim() || "Unknow",
                 })),
             };
 

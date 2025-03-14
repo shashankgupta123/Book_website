@@ -7,16 +7,18 @@ import "./Header.css";
 
 import PhoneImage from "../../assets/Header/phone.jpg";
 import SearchImage from "../../assets/Header/search_image.jpg";
+import { FaShoppingCart } from "react-icons/fa"; 
+import iconimage from '../../assets/Header/icon1_copy.jpg';
 
 const navLinks = [
   {
     path: "/",
     display: "Home",
   },
-  {
-    path: "/about",
-    display: "About",
-  },
+  // {
+  //   path: "/about",
+  //   display: "About",
+  // },
   {
     path: "/user-books",
     display: "Book",
@@ -25,6 +27,10 @@ const navLinks = [
   {
     path: "/map",
     display: "Maps",
+  },
+  {
+    path: "/contact",
+    display: "Contact",
   },
 ];
 
@@ -80,8 +86,6 @@ const Header = forwardRef((prop, ref) => {
     }
 };
 
-  
-
   useEffect(() => {
     const handleVoiceSearch = (event) => {
       const carQuery = event.detail.trim();
@@ -100,93 +104,49 @@ const Header = forwardRef((prop, ref) => {
     return () => window.removeEventListener("searchBookEvent", handleVoiceSearch);
   }, [userEmail]);
 
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/users/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        localStorage.clear();
+        navigate("/login");
+      } else {
+        const data = await response.json();
+        console.error("Logout failed:", data.message);
+      }
+    } catch (error) {
+      console.error("Logout error:", error.message);
+    }
+  };
+
   return (
     <header className="header">
       {/* ============ header top ============ */}
       <div className="header__top">
         <Container>
-          <Row>
+          {/* <Row>
             <Col lg="6" md="6" sm="6">
               <div className="header__top__left">
+              <img src={iconimage} style={{ width: "30px", height: "30px", objectFit: "contain" }} />
                 <span>Need Help?</span>
                 <span className="header__top__help">
-                <img src={PhoneImage}  alt="Phone icon" style={{ width: '20px', height: '20px', marginRight: '10px' }} />
-                  9876789786
+                  <img src={PhoneImage} alt="Phone icon" style={{ width: "20px", height: "20px", marginRight: "10px" }} />
+                  +1-202-555-0149
                 </span>
               </div>
             </Col>
-
-            <Col lg="6" md="6" sm="6">
-              <div className="header__top__right d-flex align-items-center justify-content-end gap-3">
-                <Link to="#" className=" d-flex align-items-center gap-1">
-                  <i class="ri-login-circle-line"></i> Login
-                </Link>
-
-                <Link to="#" className=" d-flex align-items-center gap-1">
-                  <i class="ri-user-line"></i> Register
-                </Link>
-              </div>
-            </Col>
-          </Row>
+          </Row> */}
         </Container>
       </div>
 
       {/* =============== header middle =========== */}
-      <div className="header__middle">
-        <Container>
-          <Row>
-            <Col lg="4" md="3" sm="4">
-              <div className="logo">
-                <h1>
-                  <Link to="/home" className=" d-flex align-items-center gap-2">
-                    <i class="ri-car-line"></i>
-                    <span>
-                      Book <br /> Store
-                    </span>
-                  </Link>
-                </h1>
-              </div>
-            </Col>
 
-            <Col lg="3" md="3" sm="4">
-              <div className="header__location d-flex align-items-center gap-2">
-                <span>
-                  <i class="ri-earth-line"></i>
-                </span>
-                <div className="header__location-content">
-                  <h4>India</h4>
-                  <h4>Mumbai City</h4>
-                </div>
-              </div>
-            </Col>
-
-            <Col lg="3" md="3" sm="4">
-              <div className="header__location d-flex align-items-center gap-2">
-                <span>
-                  <i class="ri-time-line"></i>
-                </span>
-                <div className="header__location-content">
-                  <h4>Monday to Saturday</h4>
-                  <h6>10am - 7pm</h6>
-                </div>
-              </div>
-            </Col>
-
-            <Col
-              lg="2"
-              md="3"
-              sm="0"
-              className=" d-flex align-items-center justify-content-end "
-            >
-              <button className="header__btn btn ">
-                <Link to="/contact">
-                  <i class="ri-phone-line"></i> Request a call
-                </Link>
-              </button>
-            </Col>
-          </Row>
-        </Container>
-      </div>
 
       {/* ========== main navigation =========== */}
 
@@ -199,6 +159,8 @@ const Header = forwardRef((prop, ref) => {
 
             <div className="navigation" ref={menuRef} onClick={toggleMenu}>
               <div className="menu">
+              <img src={iconimage} style={{ width: "70px", height: "70px", objectFit: "contain" }} />
+              <p style={{ fontSize: "22px" , paddingTop: "15px", fontFamily: "Arial", color:"#9279BA"}}>BOOKS HAVEN</p>
                 {navLinks.map((item, index) => (
                   <NavLink
                     to={item.path}
@@ -214,7 +176,7 @@ const Header = forwardRef((prop, ref) => {
             </div>
 
             <div className="nav__right">
-              <div className="search__box">
+              <div className="">
                 <form onSubmit={handleSearch}>
                   <div className="search-container">
                   <input type="text" placeholder="Search" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}/>
@@ -222,8 +184,23 @@ const Header = forwardRef((prop, ref) => {
                     <img src={SearchImage} alt="Search Icon" className="search-icon"/>
                   </button>
                   </div>
-                </form>
+                </form> 
               </div>
+              <Link 
+                  to="/cart" 
+                  className="cart-icon"
+                  style={{
+                    position: "absolute",
+                    right: "85px", // Adjust the position as needed
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    color: "white",
+                    cursor: "pointer",
+                  }}
+                >
+  <FaShoppingCart size={24} />
+</Link>
+
             </div>
           </div>
         </Container>

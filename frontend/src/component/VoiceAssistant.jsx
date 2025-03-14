@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SpeechRecognition, { useSpeechRecognition } from "react-speech-recognition";
+import micimage from '../assets/MIC/mic.jpeg'
 
 const VoiceAssistant = () => {
   const { transcript, listening, resetTranscript, browserSupportsSpeechRecognition } = useSpeechRecognition();
@@ -102,10 +103,10 @@ const VoiceAssistant = () => {
 
   return (
     <div style={styles.container}>
-      <p>Transcript: {transcript}</p>
+      <p>{transcript}</p>
       <div style={styles.buttonsContainer}>
         <img
-          src="https://img.icons8.com/color/48/microphone.png"
+          src={micimage}
           alt="Start Listening"
           onClick={startListening}
           style={styles.imageButton}
@@ -117,7 +118,7 @@ const VoiceAssistant = () => {
           style={styles.imageButton}
         />
       </div>
-      <button onClick={() => speak("Testing speech synthesis!")}>Test Speech</button>
+      {/* <button onClick={() => speak("Testing speech synthesis!")}>Test Speech</button> */}
     </div>
   );
 };
