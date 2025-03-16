@@ -4,7 +4,8 @@ import Book from '../Models/Book.js'
 const cartSchema = new mongoose.Schema({
         
             book: { 
-                type: mongoose.Schema.Types.ObjectId, ref: "Book", required: true }, // Reference to Book model
+                type: mongoose.Schema.Types.ObjectId, ref: "Book", required: true }, 
+            userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
             title: { 
                 type: String, 
                 required: true 

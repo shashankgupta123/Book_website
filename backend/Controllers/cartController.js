@@ -4,28 +4,29 @@ import Book from '../Models/Book.js';
 // Add book to cart
 export const addToCart = async (req, res) => {
     try {
-        const { bookId, title, author, imageUrl, price, quantity } = req.body;
+        console.log("Request Body:", req.body); // Debug log
 
-        if (!bookId || !title || !author || !imageUrl || !price || !quantity) {
+        const { userId, bookId, title, author, imageUrl, price, quantity } = req.body;
+
+        if (!userId || !bookId || !title || !author || !imageUrl || !price || !quantity) {
             return res.status(400).json({ message: "All fields are required." });
         }
 
-        // Check if book exists
         const existingBook = await Book.findById(bookId);
         if (!existingBook) {
             return res.status(404).json({ message: "Book not found." });
         }
 
-        // Check if book is already in cart
-        const existingCartItem = await Cart.findOne({ book: bookId });
+        const existingCartItem = await Cart.findOne({ userId, book: bookId });
+
         if (existingCartItem) {
             existingCartItem.quantity += quantity;
             await existingCartItem.save();
             return res.status(200).json(existingCartItem);
         }
 
-        // Add new book to cart
         const newCartItem = new Cart({
+            userId, // Ensure userId is being stored
             book: bookId,
             title,
             author,
@@ -37,17 +38,22 @@ export const addToCart = async (req, res) => {
         await newCartItem.save();
         res.status(201).json(newCartItem);
     } catch (error) {
+        console.error("Error adding to cart:", error);
         res.status(500).json({ message: "Server error", error });
     }
 };
 
+
 // Get all cart items
 export const getCartItems = async (req, res) => {
+    const { userId } = req.params;
+
     try {
-        const cartItems = await Cart.find().populate("book");
-        res.status(200).json(cartItems);
+        const cartItems = await Cart.find({ userId }); // Fetch cart for this user only
+        res.json(cartItems);
     } catch (error) {
-        res.status(500).json({ message: "Server error", error });
+        console.error('Error fetching cart:', error);
+        res.status(500).json({ message: 'Server error fetching cart' });
     }
 };
 

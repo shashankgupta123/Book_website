@@ -4,7 +4,7 @@ import { addToCart, getCartItems, removeFromCart, clearCart, updateQuantity } fr
 const router = express.Router();
 
 router.post('/', addToCart); // Add book to cart
-router.get('/', getCartItems);
+router.get('/:userId', getCartItems);
 router.put('/:id', updateQuantity); // Get cart items
 router.delete('/:id', removeFromCart); // Remove book from cart
 router.delete('/', clearCart); // Clear entire cart
