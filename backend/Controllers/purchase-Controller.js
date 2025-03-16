@@ -97,45 +97,47 @@ export const createCheckoutSession = async (req, res) => {
 
 export const createCheckoutSessionCart = async (req, res) => {
     try {
-        console.log("📩 Received checkout request:", JSON.stringify(req.body, null, 2));
+        console.log("📩 Full request body:", JSON.stringify(req.body, null, 2));
 
-        if (req.method !== 'POST') {
-            return res.status(405).json({ message: 'Method Not Allowed' });
-        }
+        // Correctly extracting user details
+        const { userId, username, email, phone, items, totalAmount, locationId } = req.body;
 
-        const { userDetails, locationId, bookId } = req.body;
+        // Creating userDetails manually
+        const userDetails = { userId, username, email, phone };
 
-        if (!userDetails?.username || !userDetails?.email || !userDetails?.phone) {
+        // Extract bookIds from items
+        const bookId = items.map(item => item.bookId);
+
+        if (!userDetails || !userDetails.username || !userDetails.email || !userDetails.phone) {
+            console.error("❌ Missing required user details:", userDetails);
             return res.status(400).json({ message: 'Missing required user details' });
         }
 
         if (!Array.isArray(bookId) || bookId.length === 0) {
+            console.error("❌ No books selected for purchase:", bookId);
             return res.status(400).json({ message: "No books selected for purchase" });
         }
-
-        if (!locationId || (!mongoose.Types.ObjectId.isValid(locationId) && typeof locationId !== 'string')) {
-            return res.status(400).json({ message: "Invalid location ID format" });
-        }
-
-        let totalAmount = 0;
+        
+        let totalCost = 0;
         let lineItems = [];
         let purchasedBooks = [];
         let errors = [];
 
-        for (const id of bookId) {
-            console.log(`🔎 Searching for book in Books collection, ID: ${id}`);
+        for (const item of items) {
+            const { bookId, title, quantity, price } = item;
+            console.log(`🔎 Searching for book: ${title} (ID: ${bookId})`);
 
-            if (!mongoose.Types.ObjectId.isValid(id)) {
-                console.error(`❌ Invalid book ID format: ${id}`);
-                errors.push(`Invalid book ID format: ${id}`);
-                continue; // Skip invalid ID
+            if (!mongoose.Types.ObjectId.isValid(bookId)) {
+                console.error(`❌ Invalid book ID format: ${bookId}`);
+                errors.push(`Invalid book ID format: ${bookId}`);
+                continue;
             }
 
-            const book = await Book.findOne({ book: id });
+            const book = await Book.findOne({ _id: book });
             if (!book) {
-                console.error(`❌ Book not found: ${id}`);
-                errors.push(`Book with ID ${id} not found`);
-                continue; // Skip missing book
+                console.error(`❌ Book not found: ${title}`);
+                errors.push(`Book not found: ${title}`);
+                continue;
             }
 
             const locationIndex = book.locations.findIndex(loc =>
@@ -143,37 +145,37 @@ export const createCheckoutSessionCart = async (req, res) => {
             );
 
             if (locationIndex === -1) {
-                console.error(`❌ Location not found for book: ${book.title}`);
-                errors.push(`Invalid location for ${book.title}`);
-                continue; // Skip books with invalid locations
+                console.error(`❌ Location not found for book: ${title}`);
+                errors.push(`Invalid location for ${title}`);
+                continue;
             }
 
-            if (book.locations[locationIndex].quantity <= 0) {
-                console.error(`❌ No stock available for ${book.title} at selected location`);
-                errors.push(`No stock available for ${book.title} at selected location`);
-                continue; // Skip out-of-stock books
+            if (book.locations[locationIndex].quantity < quantity) {
+                console.error(`❌ Not enough stock for ${title}`);
+                errors.push(`Not enough stock for ${title}`);
+                continue;
             }
 
             // Reduce stock
-            book.locations[locationIndex].quantity -= 1;
+            book.locations[locationIndex].quantity -= quantity;
             book.markModified("locations");
             await book.save();
 
-            totalAmount += book.price;
-            console.log(`✅ Updated stock for ${book.title}, New Quantity: ${book.locations[locationIndex].quantity}`);
+            totalCost += price * quantity;
+            console.log(`✅ Updated stock for ${title}, New Quantity: ${book.locations[locationIndex].quantity}`);
 
             lineItems.push({
                 price_data: {
                     currency: 'inr',
-                    product_data: { name: book.title, description: book.description },
-                    unit_amount: Math.round(book.price * 100),
+                    product_data: { name: title, description: book.description },
+                    unit_amount: Math.round(price * 100),
                 },
-                quantity: 1,
+                quantity: quantity,
             });
 
             purchasedBooks.push({
                 userId: userDetails.userId,
-                bookTitle: book.title,
+                bookTitle: title,
                 location: book.locations[locationIndex].placeName,
             });
         }
@@ -193,13 +195,37 @@ export const createCheckoutSessionCart = async (req, res) => {
         });
 
         console.log("✅ Checkout session created successfully:", session.id);
-        return res.status(201).json({ url: session.url, errors });
+        return res.status(201).json({ sessionId: session.id, url: session.url, errors });
 
     } catch (err) {
         console.error('❌ Error during checkout:', err);
         return res.status(500).json({ message: 'Checkout process failed', error: err.message });
     }
 };
+
+
+export const showPaymentPage = async (req, res) => {
+    try {
+        const { sessionId } = req.params;
+
+        if (!sessionId) {
+            return res.status(400).json({ message: "Missing session ID" });
+        }
+
+        console.log("🔍 Retrieving Stripe session...");
+        const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+        if (!session) {
+            return res.status(404).json({ message: "Session not found" });
+        }
+
+        return res.redirect(session.url);
+    } catch (err) {
+        console.error("❌ Error retrieving Stripe session:", err);
+        return res.status(500).json({ message: "Failed to retrieve payment session", error: err.message });
+    }
+};
+
 
 export const generateReceipt = async (req, res) => {
     const { sessionId } = req.params;
